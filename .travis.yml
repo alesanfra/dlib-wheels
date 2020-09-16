@@ -39,21 +39,6 @@ dist: xenial
 matrix:
   include:
     - os: linux
-      env: MB_PYTHON_VERSION=2.7
-    - os: linux
-      env:
-        - MB_PYTHON_VERSION=2.7
-        - UNICODE_WIDTH=16
-    - os: linux
-      env:
-        - MB_PYTHON_VERSION=2.7
-        - PLAT=i686
-    - os: linux
-      env:
-        - MB_PYTHON_VERSION=2.7
-        - PLAT=i686
-        - UNICODE_WIDTH=16
-    - os: linux
       env:
         - MB_PYTHON_VERSION=3.5
     - os: linux
@@ -67,33 +52,25 @@ matrix:
       env:
         - MB_PYTHON_VERSION=3.6
         - PLAT=i686
-    - os: osx
-      env:
-        - MB_PYTHON_VERSION=2.7
-        - MB_PYTHON_OSX_VER=10.6
-    - os: osx
-      env:
-        - MB_PYTHON_VERSION=2.7
-    - os: osx
-      env:
-        - MB_PYTHON_VERSION=3.5
-    - os: osx
-      env:
-        - MB_PYTHON_VERSION=3.6
-    - os: osx
+    - os: linux
       env:
         - MB_PYTHON_VERSION=3.7
-        - MB_PYTHON_OSX_VER=10.6
+    - os: linux
+      env:
+        - MB_PYTHON_VERSION=3.7
+        - PLAT=i686
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=3.5
+    - os: osx
+      env:
+        - MB_PYTHON_VERSION=3.6
     - os: osx
       env:
         - MB_PYTHON_VERSION=3.7
     - os: osx
       env:
         - MB_PYTHON_VERSION=3.8
-    - os: osx
-      language: generic
-      env:
-        - MB_PYTHON_VERSION=pypy-5.7
 
 before_install:
     - source multibuild/common_utils.sh
