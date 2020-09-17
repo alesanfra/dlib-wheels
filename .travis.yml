@@ -4,7 +4,7 @@ env:
         # Commit from your-project that you want to build
         - BUILD_COMMIT=v19.21
         # pip dependencies to _build_ your project
-        - BUILD_DEPENDS="cython"
+        - BUILD_DEPENDS="cython cmake"
         # pip dependencies to _test_ your project.  Include any dependencies
         # that you need, that are also specified in BUILD_DEPENDS, this will be
         # a separate install.
