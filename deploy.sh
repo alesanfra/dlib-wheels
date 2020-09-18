@@ -10,4 +10,4 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     pip install --upgrade pyOpenSSL
 fi
 echo "uploading"
-twine upload --skip-existing ${TRAVIS_BUILD_DIR}/wheelhouse/dlib-bin*
+twine upload --skip-existing ${TRAVIS_BUILD_DIR}/wheelhouse/dlib_bin*
