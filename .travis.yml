@@ -10,6 +10,8 @@ env:
         # a separate install.
         # Now see the Uploads section for the stuff you need to
         # upload your wheels after CI has built them.
+        - TWINE_USERNAME=__token__
+        - secure: "iPVbbP+XiufLNJNnt+byMWACq/Go6wwzp2ug8OQolhAAQwaNZkrwRiqxm+e3Z/i220oYda6Fx6X8bQiL5VikQ3TiRfidn/2EXv6owN+SBErGDPU5c39/Up9cIDIJRnvMCFIP9QRLw/OQ8Nki9wJVY5tS6IvExzZPnRwZP7N0xNq9oNQlqk9bKiP2F8Xf0QQ3gjeZC8tRVkZXT+0TGImnP8Krc18tSJGsX/dTFeOHXi6Q4kF3LtXsW12AYXdnfStyOtYrlzNeHOU//MnlWWN89le2XoSX3G1MCCGHPS1x0me1yFQwLVK+aLKUWGX/HryT/ZlyhT/WEaD9d/p7Cu1mrQnB1rpmG+BtJtnCS8kGESdykqHgKH24qIcrQXNqU4EZcm16larrbUV5WC7OEhGBLhLgx0DxbptZED43mP/aOqG/QVza4y6Edf56vLpKBOWTCZABLTP1ROdCowGL1Rma40GlrYJUjb8lcqEHR0qPvj0BY6wdBrhYWemltiKeqrc2KcA/vI7DwSJwIDK2bSdMJAGYKwzx8jVEvAAH6zHhXcnu7cHrIAR+7849EydD1n478Nt9QPNS6IBWcWIdGPM2FQsJLdt/P3KbmC8093EuS6z1m0W5rK9fha2NC/FEWGA7UYQh3npAFhwrw4AWT9IZJUzhCI7LSbPDlgT8sB/xyOg="
 
 # You will likely prefer "language: generic" for travis configuration,
 # rather than, say "language: python". Multibuild doesn't use
@@ -89,3 +91,8 @@ after_success:
     # Here you should put the code to upload your wheels
     # See the Uploads section for more details.
 
+deploy:
+  - provider: script
+    script: bash deploy.sh
+    on:
+      branch: master
