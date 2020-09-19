@@ -1,13 +1,13 @@
 #!/bin/bash
 
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-    pip install --user twine
-    pip install --user --upgrade six
+    pip3 install twine
+    pip3 install --upgrade six
 fi
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-    pip install twine
-    pip install --upgrade pyOpenSSL
+    pip3 install twine
+    pip3 install --upgrade pyOpenSSL
 fi
 
 echo "Uploading to pypi"
