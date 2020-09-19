@@ -1,0 +1,84 @@
+# vim ft=yaml
+# CI on Windows via appveyor
+
+environment:
+  global:
+    REPO_DIR: dlib
+    PACKAGE_NAME: dlib-bin
+    BUILD_COMMIT: v19.21
+    OTHER_BUILD_DEP: "cython cmake"
+    TWINE_USERNAME: __token__
+
+  matrix:
+    - PYTHON: C:\Python36
+    - PYTHON: C:\Python36-x64
+    - PYTHON: C:\Python37
+    - PYTHON: C:\Python37-x64
+    - PYTHON: C:\Python38
+    - PYTHON: C:\Python38-x64
+
+matrix:
+    fast_finish: true
+
+install:
+    # Fetch submodules
+    - git submodule update --init --recursive
+
+    # Install new Python if necessary
+    - ps: .\multibuild\install_python.ps1
+
+    # Prepend newly installed Python to the PATH of this build (this cannot be
+    # done from inside the powershell script as it would require to restart
+    # the parent CMD process).
+    - SET PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+    - python -m pip install -U pip setuptools
+
+    # Fix MSVC builds for 64-bit Python. See:
+    # http://stackoverflow.com/questions/32091593/cannot-install-windows-sdk-7-1-on-windows-10
+    - echo "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64 > "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\amd64/vcvars64.bat"
+
+    # Check that we have the expected version and architecture for Python
+    - python --version
+    - python -c "import struct; print(struct.calcsize('P') * 8)"
+
+build_script:
+    # Install the dependencies of the project.
+    - python -m pip install %NP_BUILD_DEP% %OTHER_BUILD_DEP%
+    # Build wheel
+    - python -m pip install wheel
+    - cd %REPO_DIR%
+    - git checkout %BUILD_COMMIT%
+    # IMPORTANT: do not apply any patches here, since this will affect the version
+    # determined by setuptools_scm! Instead, find a way to apply the patch to the
+    # installed version, or better, just patch astropy :)
+    - python setup.py bdist_wheel
+    - cd ..
+
+test_script:
+    # create test env
+    - virtualenv --python %PYTHON%\Python.exe test_env
+    - test_env\Scripts\activate.bat
+    - where python
+    - python -m pip install %NP_TEST_DEP% %OTHER_TEST_DEP%
+
+    # install from wheel
+    - python -m pip install --pre --no-index --find-links %REPO_DIR%\dist\ %PACKAGE_NAME%
+
+    # Change into an innocuous directory and find tests from installation
+    - mkdir for_testing
+    - cd for_testing
+    - python --version
+    - python -c "import dlib"
+    - cd ..
+
+artifacts:
+    - path: "%REPO_DIR%\\dist\\*"
+
+on_success:
+  # Upload the generated wheel package to anaconda.org
+  # ASTROPY_STAGING_UPLOAD_TOKEN is an encrypted variable
+  # used in Appveyor CI config, originally created at
+  # multibuild-wheels-staging site
+  - pip install twine
+  - echo "Deploy"
+  #- IF NOT "%ASTROPY_STAGING_UPLOAD_TOKEN%" == "" anaconda -t %ASTROPY_STAGING_UPLOAD_TOKEN% upload --force -u %ANACONDA_ORG% "astropy\dist\*.whl"
