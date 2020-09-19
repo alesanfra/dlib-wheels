@@ -63,9 +63,6 @@ matrix:
         - PLAT=i686
     - os: osx
       env:
-        - MB_PYTHON_VERSION=3.5
-    - os: osx
-      env:
         - MB_PYTHON_VERSION=3.6
     - os: osx
       env:
