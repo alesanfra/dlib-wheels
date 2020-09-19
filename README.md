@@ -10,6 +10,13 @@ With `dlib-bin` you're just one `pip install` away from your next machine learni
 
 Currently building for wheels for macOS and linux ([manylinux1](https://www.python.org/dev/peps/pep-0513) x86_64 and i686). Windows builds are coming soon!
 
+## How to install this distribution?
+
+Just open a terminal and type:
+
+```bash
+pip install dlib-bin
+```
 
 ## How to contribute?
 

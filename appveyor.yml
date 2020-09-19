@@ -1,20 +1,17 @@
-# vim ft=yaml
-# CI on Windows via appveyor
-
 environment:
   global:
     REPO_DIR: dlib
     PACKAGE_NAME: dlib-bin
     BUILD_COMMIT: v19.21
-    OTHER_BUILD_DEP: "cython cmake"
+    BUILD_DEP: "cython cmake wheel"
     TWINE_USERNAME: __token__
 
   matrix:
-    - PYTHON: C:\Python36
+    #- PYTHON: C:\Python36
     - PYTHON: C:\Python36-x64
-    - PYTHON: C:\Python37
+    #- PYTHON: C:\Python37
     - PYTHON: C:\Python37-x64
-    - PYTHON: C:\Python38
+    #- PYTHON: C:\Python38
     - PYTHON: C:\Python38-x64
 
 matrix:
@@ -43,14 +40,9 @@ install:
 
 build_script:
     # Install the dependencies of the project.
-    - python -m pip install %NP_BUILD_DEP% %OTHER_BUILD_DEP%
-    # Build wheel
-    - python -m pip install wheel
+    - python -m pip install %BUILD_DEP%
     - cd %REPO_DIR%
     - git checkout %BUILD_COMMIT%
-    # IMPORTANT: do not apply any patches here, since this will affect the version
-    # determined by setuptools_scm! Instead, find a way to apply the patch to the
-    # installed version, or better, just patch astropy :)
     - python setup.py bdist_wheel
     - cd ..
 
@@ -59,7 +51,6 @@ test_script:
     - virtualenv --python %PYTHON%\Python.exe test_env
     - test_env\Scripts\activate.bat
     - where python
-    - python -m pip install %NP_TEST_DEP% %OTHER_TEST_DEP%
 
     # install from wheel
     - python -m pip install --pre --no-index --find-links %REPO_DIR%\dist\ %PACKAGE_NAME%
@@ -75,10 +66,5 @@ artifacts:
     - path: "%REPO_DIR%\\dist\\*"
 
 on_success:
-  # Upload the generated wheel package to anaconda.org
-  # ASTROPY_STAGING_UPLOAD_TOKEN is an encrypted variable
-  # used in Appveyor CI config, originally created at
-  # multibuild-wheels-staging site
   - pip install twine
   - echo "Deploy"
-  #- IF NOT "%ASTROPY_STAGING_UPLOAD_TOKEN%" == "" anaconda -t %ASTROPY_STAGING_UPLOAD_TOKEN% upload --force -u %ANACONDA_ORG% "astropy\dist\*.whl"
