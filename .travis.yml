@@ -1,92 +1,79 @@
+language: python
+
 env:
-    global:
-        - REPO_DIR=dlib
-        # Commit from your-project that you want to build
-        - BUILD_COMMIT=v19.21
-        # pip dependencies to _build_ your project
-        - BUILD_DEPENDS="cython cmake"
-        # pip dependencies to _test_ your project.  Include any dependencies
-        # that you need, that are also specified in BUILD_DEPENDS, this will be
-        # a separate install.
-        # Now see the Uploads section for the stuff you need to
-        # upload your wheels after CI has built them.
-        - TWINE_USERNAME=__token__
-        - secure: "iPVbbP+XiufLNJNnt+byMWACq/Go6wwzp2ug8OQolhAAQwaNZkrwRiqxm+e3Z/i220oYda6Fx6X8bQiL5VikQ3TiRfidn/2EXv6owN+SBErGDPU5c39/Up9cIDIJRnvMCFIP9QRLw/OQ8Nki9wJVY5tS6IvExzZPnRwZP7N0xNq9oNQlqk9bKiP2F8Xf0QQ3gjeZC8tRVkZXT+0TGImnP8Krc18tSJGsX/dTFeOHXi6Q4kF3LtXsW12AYXdnfStyOtYrlzNeHOU//MnlWWN89le2XoSX3G1MCCGHPS1x0me1yFQwLVK+aLKUWGX/HryT/ZlyhT/WEaD9d/p7Cu1mrQnB1rpmG+BtJtnCS8kGESdykqHgKH24qIcrQXNqU4EZcm16larrbUV5WC7OEhGBLhLgx0DxbptZED43mP/aOqG/QVza4y6Edf56vLpKBOWTCZABLTP1ROdCowGL1Rma40GlrYJUjb8lcqEHR0qPvj0BY6wdBrhYWemltiKeqrc2KcA/vI7DwSJwIDK2bSdMJAGYKwzx8jVEvAAH6zHhXcnu7cHrIAR+7849EydD1n478Nt9QPNS6IBWcWIdGPM2FQsJLdt/P3KbmC8093EuS6z1m0W5rK9fha2NC/FEWGA7UYQh3npAFhwrw4AWT9IZJUzhCI7LSbPDlgT8sB/xyOg="
+  global:
+    - REPO_DIR=dlib
+    - BUILD_COMMIT=v19.21
+    - CIBUILDWHEEL_VERSION=1.5.0
+    - CIBW_BEFORE_BUILD="pip install cmake"
+    - CIBW_SKIP="cp27-* cp35-* pp* *-win32 *i686"
+    - TWINE_USERNAME=__token__
+    - secure: "iPVbbP+XiufLNJNnt+byMWACq/Go6wwzp2ug8OQolhAAQwaNZkrwRiqxm+e3Z/i220oYda6Fx6X8bQiL5VikQ3TiRfidn/2EXv6owN+SBErGDPU5c39/Up9cIDIJRnvMCFIP9QRLw/OQ8Nki9wJVY5tS6IvExzZPnRwZP7N0xNq9oNQlqk9bKiP2F8Xf0QQ3gjeZC8tRVkZXT+0TGImnP8Krc18tSJGsX/dTFeOHXi6Q4kF3LtXsW12AYXdnfStyOtYrlzNeHOU//MnlWWN89le2XoSX3G1MCCGHPS1x0me1yFQwLVK+aLKUWGX/HryT/ZlyhT/WEaD9d/p7Cu1mrQnB1rpmG+BtJtnCS8kGESdykqHgKH24qIcrQXNqU4EZcm16larrbUV5WC7OEhGBLhLgx0DxbptZED43mP/aOqG/QVza4y6Edf56vLpKBOWTCZABLTP1ROdCowGL1Rma40GlrYJUjb8lcqEHR0qPvj0BY6wdBrhYWemltiKeqrc2KcA/vI7DwSJwIDK2bSdMJAGYKwzx8jVEvAAH6zHhXcnu7cHrIAR+7849EydD1n478Nt9QPNS6IBWcWIdGPM2FQsJLdt/P3KbmC8093EuS6z1m0W5rK9fha2NC/FEWGA7UYQh3npAFhwrw4AWT9IZJUzhCI7LSbPDlgT8sB/xyOg="
 
-# You will likely prefer "language: generic" for travis configuration,
-# rather than, say "language: python". Multibuild doesn't use
-# Travis-provided Python but rather installs and uses its own, where the
-# Python version is set from the MB_PYTHON_VERSION variable. You can still
-# specify a language here if you need it for some unrelated logic and you
-# can't use Multibuild-provided Python or other software present on a
-# builder.
-language: generic
-
-# For CPython macOS builds only, the minimum supported macOS version and
-# architectures of any C extensions in the wheel are set with the variable
-# MB_PYTHON_OSX_VER: 10.9 (64-bit only) or 10.6 (64/32-bit dual arch). By
-# default this is set to the highest available for the Python version selected
-# using MB_PYTHON_VERSION. You should only need to set this explicitly if you
-# are building a 10.6 dual-arch build for a CPython version where both a 10.9 and
-# 10.6 build are available (for example, 2.7 or 3.7).
-# All PyPy macOS builds are 64-bit only.
-
-# Required in Linux to invoke `docker` ourselves
-services: docker
-
-# Host distribution.  This is the distribution from which we run the build
-# and test containers, via docker.
-dist: xenial
-
-matrix:
+jobs:
   include:
-    - os: linux
+    - name: Linux | x86_64 | Python 3.6
+      services: docker
       env:
-        - MB_PYTHON_VERSION=3.5
-    - os: linux
+        - CIBW_BUILD=cp36-*
+    - name: Linux | x86_64 | Python 3.7
+      services: docker
       env:
-        - MB_PYTHON_VERSION=3.5
-        - PLAT=i686
-    - os: linux
+        - CIBW_BUILD=cp37-*
+    - name: Linux | x86_64 | Python 3.8
+      services: docker
       env:
-        - MB_PYTHON_VERSION=3.6
-    - os: linux
+        - CIBW_BUILD=cp38-*
+    - name: macOS | x86_64 | Python 3.6
+      os: osx
+      language: shell
       env:
-        - MB_PYTHON_VERSION=3.6
-        - PLAT=i686
-    - os: linux
+        - CIBW_BUILD=cp36-*
+    - name: macOS | x86_64 | Python 3.7
+      os: osx
+      language: shell
       env:
-        - MB_PYTHON_VERSION=3.7
-    - os: linux
+        - CIBW_BUILD=cp37-*
+    - name: macOS | x86_64 | Python 3.8
+      os: osx
+      language: shell
       env:
-        - MB_PYTHON_VERSION=3.7
-        - PLAT=i686
-    - os: osx
+        - CIBW_BUILD=cp38-*
+    - name: Windows | x86_64 | Python 3.6
+      os: windows
+      language: shell
+      before_install:
+        - choco install python --version 3.8.0
+        - export PATH="/c/Python38:/c/Python38/Scripts:$PATH"
+        - ln -s /c/Python38/python.exe /c/Python38/python3.exe
       env:
-        - MB_PYTHON_VERSION=3.6
-    - os: osx
+        - CIBW_BUILD=cp36-*
+    - name: Windows | x86_64 | Python 3.7
+      os: windows
+      language: shell
+      before_install:
+        - choco install python --version 3.8.0
+        - export PATH="/c/Python38:/c/Python38/Scripts:$PATH"
+        - ln -s /c/Python38/python.exe /c/Python38/python3.exe
       env:
-        - MB_PYTHON_VERSION=3.7
-    - os: osx
+        - CIBW_BUILD=cp37-*
+    - name: Windows | x86_64 | Python 3.8
+      os: windows
+      language: shell
+      before_install:
+        - choco install python --version 3.8.0
+        - export PATH="/c/Python38:/c/Python38/Scripts:$PATH"
+        - ln -s /c/Python38/python.exe /c/Python38/python3.exe
       env:
-        - MB_PYTHON_VERSION=3.8
-
-before_install:
-    - source multibuild/common_utils.sh
-    - source multibuild/travis_steps.sh
-    - before_install
+        - CIBW_BUILD=cp38-*
 
 install:
-    # Maybe get and clean and patch source
-    - clean_code $REPO_DIR $BUILD_COMMIT
-    - build_wheel $REPO_DIR $PLAT
+  - source config.sh
+  - pre_build
+  - python3 -m pip install cibuildwheel==$CIBUILDWHEEL_VERSION
 
 script:
-    - install_run $PLAT
-
-after_success:
-    # Here you should put the code to upload your wheels
-    # See the Uploads section for more details.
+  - python3 -m cibuildwheel $REPO_DIR --output-dir wheelhouse
 
 deploy:
   - provider: script
