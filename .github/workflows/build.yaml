@@ -1,0 +1,39 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build_wheels:
+    name: Build {{ matrix.python-version }} wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, windows-2019, macOS-10.15]
+        python-version: [3.7, 3.8]
+    env:
+      REPO_DIR: 'dlib'
+      BUILD_COMMIT: 'v19.21'
+      CIBUILDWHEEL_VERSION: '1.5.0'
+      CIBW_BEFORE_BUILD: 'pip install cmake'
+      TWINE_USERNAME: '__token__'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+
+      - name: Fix setup.py
+        run: |
+          cd $REPO_DIR && git checkout $BUILD_COMMIT && cd ..
+          sed -i'' -e 's/name='"'"'dlib'"'"'/name='"'"'dlib-bin'"'"'/' $REPO_DIR/setup.py
+          sed -i'' -e 's/url='"'"'https:\/\/github\.com\/davisking\/dlib'"'"'/url='"'"'https:\/\/github\.com\/alesanfra\/dlib-wheels'"'"'/' $REPO_DIR/setup.py
+      
+      - name: Install cibuildwheel
+        run: python3 -m pip3 install cibuildwheel==$CIBUILDWHEEL_VERSION
+      
+      - name: Build wheels
+        run: python3 -m cibuildwheel $REPO_DIR --output-dir wheelhouse
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./wheelhouse/*.whl
