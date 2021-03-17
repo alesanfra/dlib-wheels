@@ -36,7 +36,7 @@ jobs:
           sed -i'' -e 's/url='"'"'https:\/\/github\.com\/davisking\/dlib'"'"'/url='"'"'https:\/\/github\.com\/alesanfra\/dlib-wheels'"'"'/' $REPO_DIR/setup.py
       
       - name: Install cibuildwheel
-        run: python3 -m pip3 install cibuildwheel==$CIBUILDWHEEL_VERSION
+        run: python -m pip install cibuildwheel==$CIBUILDWHEEL_VERSION
       
       - name: Build wheels
         run: python3 -m cibuildwheel $REPO_DIR --output-dir wheelhouse
