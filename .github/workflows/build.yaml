@@ -14,7 +14,7 @@ jobs:
       BUILD_COMMIT: 'v19.21'
       CIBUILDWHEEL_VERSION: '1.10.0'
       CIBW_BEFORE_BUILD: 'pip install cmake'
-      CIBW_BUILD: 'cp39-*'
+      CIBW_BUILD: 'cp38-* cp39-*'
       CIBW_ARCHS: auto64
       TWINE_USERNAME: '__token__'
 
@@ -44,3 +44,23 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           path: ./wheelhouse/*.whl
+
+  upload_pypi:
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    # upload to PyPI on master
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    # upload to PyPI on every tag starting with 'v'
+    # if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
+    # alternatively, to publish when a GitHub Release is created, use the following rule:
+    # if: github.event_name == 'release' && github.event.action == 'published'
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: artifact
+          path: dist
+
+      - uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_PASSWORD }}
