@@ -16,7 +16,6 @@ jobs:
       CIBW_BEFORE_BUILD: 'pip install cmake'
       CIBW_BUILD: 'cp38-* cp39-*'
       CIBW_ARCHS: auto64
-      TWINE_USERNAME: '__token__'
 
     steps:
       - name: Checkout
@@ -50,10 +49,6 @@ jobs:
     runs-on: ubuntu-latest
     # upload to PyPI on master
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    # upload to PyPI on every tag starting with 'v'
-    # if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
-    # alternatively, to publish when a GitHub Release is created, use the following rule:
-    # if: github.event_name == 'release' && github.event.action == 'published'
     steps:
       - uses: actions/download-artifact@v2
         with:
@@ -64,3 +59,4 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_PASSWORD }}
+          skip_existing: true
