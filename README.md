@@ -1,6 +1,6 @@
 # Dlib binary distribution
 
-[![Build Status](https://travis-ci.com/alesanfra/dlib-wheels.svg?branch=master)](https://travis-ci.com/alesanfra/dlib-wheels)
+[![Build](https://github.com/alesanfra/dlib-wheels/actions/workflows/build.yaml/badge.svg)](https://github.com/alesanfra/dlib-wheels/actions/workflows/build.yaml)
 [![PyPI version](https://badge.fury.io/py/dlib-bin.svg)](https://badge.fury.io/py/dlib-bin)
 
 
@@ -8,7 +8,7 @@ This project creates a pre-compiled distrubution of [dlib](https://github.com/da
 
 With `dlib-bin` you're just one `pip install` away from your next machine learning project!
 
-Currently building x86_64 wheels for macOS, windows and linux ([manylinux2010](https://www.python.org/dev/peps/pep-0571))
+Currently building x86_64 wheels for macOS and linux ([manylinux2010](https://www.python.org/dev/peps/pep-0571))
 
 ## How to install this distribution?
 
@@ -20,4 +20,4 @@ pip install dlib-bin
 
 ## How to contribute?
 
-In order to trigger a new deploy, update the `BUILD_COMMIT` variable in `.travis.yml` file with the new tag/commit pushed on the [dlib](https://github.com/davisking/dlib) repository. 
+In order to trigger a new deploy, update the `BUILD_COMMIT` variable in `.github/workflows/build.yaml` file with the new tag/commit pushed on the [dlib](https://github.com/davisking/dlib) repository. 
