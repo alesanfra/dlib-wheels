@@ -8,28 +8,34 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-10.15]
+        os: [ubuntu-latest, macos-latest]
     env:
       REPO_DIR: 'dlib'
       BUILD_COMMIT: 'v19.24'
       CIBUILDWHEEL_VERSION: '2.11.4'
       CIBW_BEFORE_BUILD: 'pip install cmake'
-      CIBW_BUILD: 'cp37-* cp38-* cp39-* cp-310-* cp-311-*'
-      CIBW_ARCHS: auto64
+      CIBW_BUILD: 'cp37-* cp38-* cp39-* cp310-*'
+      CIBW_SKIP: '*musllinux*'
+      CIBW_ARCHS: 'auto64'
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Checkout submodules
-        run: git submodule update --init --recursive
+        run: |
+          git submodule update --init --recursive
+          cd $REPO_DIR
+          pwd
+          git checkout $BUILD_COMMIT
 
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
       - name: Fix setup.py
         run: |
-          cd $REPO_DIR && git checkout $BUILD_COMMIT && cd ..
           sed -i'' -e 's/name='"'"'dlib'"'"'/name='"'"'dlib-bin'"'"'/' $REPO_DIR/setup.py
           sed -i'' -e 's/url='"'"'https:\/\/github\.com\/davisking\/dlib'"'"'/url='"'"'https:\/\/github\.com\/alesanfra\/dlib-wheels'"'"'/' $REPO_DIR/setup.py
           sed -i'' -e 's/_cmake_extra_options = \[\]/_cmake_extra_options = \['"'"'-DDLIB_NO_GUI_SUPPORT=ON'"'"'\]/' $REPO_DIR/setup.py
@@ -40,7 +46,8 @@ jobs:
       - name: Build wheels
         run: python3 -m cibuildwheel $REPO_DIR --output-dir wheelhouse
 
-      - uses: actions/upload-artifact@v2
+      - name: Save wheels
+        uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
 
@@ -50,13 +57,12 @@ jobs:
     # upload to PyPI on master
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: artifact
           path: dist
 
-      - uses: pypa/gh-action-pypi-publish@master
+      - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
           password: ${{ secrets.PYPI_PASSWORD }}
           skip_existing: true
