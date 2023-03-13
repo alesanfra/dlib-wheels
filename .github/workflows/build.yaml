@@ -33,6 +33,7 @@ jobs:
           python-version: '3.10'
 
       - name: Fix setup.py
+        shell: bash
         run: |
           sed -i'' -e 's/name='"'"'dlib'"'"'/name='"'"'dlib-bin'"'"'/' $REPO_DIR/setup.py
           sed -i'' -e 's/url='"'"'https:\/\/github\.com\/davisking\/dlib'"'"'/url='"'"'https:\/\/github\.com\/alesanfra\/dlib-wheels'"'"'/' $REPO_DIR/setup.py
