@@ -25,9 +25,7 @@ jobs:
       - name: Checkout submodules
         run: |
           git submodule update --init --recursive
-          cd $REPO_DIR
-          pwd
-          git checkout $BUILD_COMMIT
+          git -C dlib checkout $BUILD_COMMIT
 
       - name: Setup Python
         uses: actions/setup-python@v4
