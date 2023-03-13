@@ -23,6 +23,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Checkout submodules
+        shell: bash
         run: |
           git submodule update --init --recursive
           git -C dlib checkout $BUILD_COMMIT
@@ -40,9 +41,11 @@ jobs:
           sed -i'' -e 's/_cmake_extra_options = \[\]/_cmake_extra_options = \['"'"'-DDLIB_NO_GUI_SUPPORT=ON'"'"'\]/' $REPO_DIR/setup.py
 
       - name: Install cibuildwheel
+        shell: bash
         run: python -m pip install cibuildwheel==$CIBUILDWHEEL_VERSION
       
       - name: Build wheels
+        shell: bash
         run: python3 -m cibuildwheel $REPO_DIR --output-dir wheelhouse
 
       - name: Save wheels
