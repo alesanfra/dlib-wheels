@@ -38,8 +38,7 @@ jobs:
         shell: bash
         run: |
           sed -i'' -e 's/name='"'"'dlib'"'"'/name='"'"'dlib-bin'"'"'/' $REPO_DIR/setup.py
-          sed -i'' -e 's/version=read_version_from_cmakelists('"'"'dlib/CMakeLists.txt'"'"')/version='"'"'$DLIB_BIN_VERSION'"'"'/' $REPO_DIR/setup.py
-          sed -i'' -e 's/url='"'"'https:\/\/github\.com\/davisking\/dlib'"'"'/url='"'"'https:\/\/github\.com\/alesanfra\/dlib-wheels'"'"'/' $REPO_DIR/setup.py
+          sed -i .old -e "s/version=read_version_from_cmakelists('dlib\/CMakeLists.txt')/version=$DLIB_BIN_VERSION/" $REPO_DIR/setup.py          sed -i'' -e 's/url='"'"'https:\/\/github\.com\/davisking\/dlib'"'"'/url='"'"'https:\/\/github\.com\/alesanfra\/dlib-wheels'"'"'/' $REPO_DIR/setup.py
           sed -i'' -e 's/_cmake_extra_options = \[\]/_cmake_extra_options = \['"'"'-DDLIB_NO_GUI_SUPPORT=ON'"'"'\]/' $REPO_DIR/setup.py
 
       - name: Install cibuildwheel
