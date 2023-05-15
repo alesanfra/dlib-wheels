@@ -8,7 +8,7 @@ This project creates a pre-compiled distrubution of [dlib](https://github.com/da
 
 With `dlib-bin` you're just one `pip install` away from your next machine learning project!
 
-Currently building x86_64 wheels for macOS and linux ([manylinux2010](https://www.python.org/dev/peps/pep-0571))
+Currently building x86_64 wheels for windows, macOS and linux ([manylinux2014](https://www.python.org/dev/peps/pep-0571))
 
 ## How to install this distribution?
 
@@ -20,4 +20,8 @@ pip install dlib-bin
 
 ## How to contribute?
 
-In order to trigger a new deploy, update the `BUILD_COMMIT` variable in `.github/workflows/build.yaml` file with the new tag/commit pushed on the [dlib](https://github.com/davisking/dlib) repository. 
+In order to trigger a new deploy, update the following variables in `.github/workflows/build.yaml` file:
+
+- `BUILD_COMMIT`  with the new tag/commit pushed on the [dlib](https://github.com/davisking/dlib) repository;
+
+- `DLIB_BIN_VERSION` with the desired `dlib-bin` version on PyPI.
