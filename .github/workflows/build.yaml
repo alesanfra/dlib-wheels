@@ -15,7 +15,7 @@ jobs:
       DLIB_BIN_VERSION: '19.24.3'
       CIBUILDWHEEL_VERSION: '2.11.4'
       CIBW_BEFORE_BUILD: 'pip install cmake==3.27.9 && cmake --version'
-      CIBW_BUILD: 'cp37-* cp38-* cp39-* cp310-* cp311-* cp312-*'
+      CIBW_BUILD: 'cp38-* cp39-* cp310-* cp311-* cp312-*'
       CIBW_SKIP: '*musllinux*'
       CIBW_ARCHS: 'auto64'
 
