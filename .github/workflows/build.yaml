@@ -13,7 +13,7 @@ jobs:
       REPO_DIR: 'dlib'
       BUILD_COMMIT: 'v19.24.2'
       DLIB_BIN_VERSION: '19.24.2'
-      CIBUILDWHEEL_VERSION: '2.11.4'
+      CIBUILDWHEEL_VERSION: '2.17.0'
       CIBW_BEFORE_BUILD: 'pip install cmake'
       CIBW_BUILD: 'cp37-* cp38-* cp39-* cp310-* cp311-*'
       CIBW_SKIP: '*musllinux*'
