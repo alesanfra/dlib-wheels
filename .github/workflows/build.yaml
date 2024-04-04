@@ -22,13 +22,11 @@ jobs:
         with:
           python-version: 3.x
 
-      - run: pip install cibuildwheel==2.17.0
-
-      - name: Patch setup.py with python_requires
-        run: sed -i'' -e "s/setup(/setup(python_requires='$PYTHON_REQUIRES',/" setup.py
-        working-directory: ${{ env.WORKING_DIRECTORY }}
+      - run: pip install cibuildwheel==2.17.0  # sync version with pypa/cibuildwheel below
 
       - id: set-matrix
+        env:
+          CIBW_PROJECT_REQUIRES_PYTHON: '>=3.7'  # it is missing in setup.py and needed to determine which wheels to build
         run: |
           MATRIX_INCLUDE=$(
             {
@@ -76,14 +74,14 @@ jobs:
       if: runner.os == 'Linux'
       uses: docker/setup-qemu-action@v3
 
-    - uses: pypa/cibuildwheel@v2.17.0
+    - uses: pypa/cibuildwheel@v2.17.0  # sync version with pip install cibuildwheel above
       with:
         only: ${{ matrix.only }}
         package-dir: ${{ env.WORKING_DIRECTORY }}
       env:
         CIBW_BUILD_VERBOSITY: 1
         CIBW_BEFORE_BUILD: pip install cmake
-        CIBW_TEST_COMMAND: python -c "import dlib" # smoketest
+        CIBW_TEST_COMMAND: python -c "import dlib"
 
     - uses: actions/upload-artifact@v4
       with:
