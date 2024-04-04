@@ -3,7 +3,7 @@ name: Build
 on: [push]
 
 env:
-  REPO_DIR: 'dlib'
+  WORKING_DIRECTORY: 'dlib'
   BUILD_COMMIT: 'v19.24.2'
   DLIB_BIN_VERSION: '19.24.2'
   PYTHON_REQUIRES: '>=3.7'
@@ -25,7 +25,8 @@ jobs:
       - run: pip install cibuildwheel==2.17.0
 
       - name: Patch setup.py with python_requires
-        run: sed -i'' -e "s/setup(/setup(python_requires='$PYTHON_REQUIRES',/" $REPO_DIR/setup.py
+        run: sed -i'' -e "s/setup(/setup(python_requires='$PYTHON_REQUIRES',/" setup.py
+        working-directory: ${{ env.WORKING_DIRECTORY }}
 
       - id: set-matrix
         run: |
@@ -37,6 +38,7 @@ jobs:
             } | jq -sc
           )
           echo "include=$MATRIX_INCLUDE" >> $GITHUB_OUTPUT
+        working-directory: ${{ env.WORKING_DIRECTORY }}
 
   build_wheels:
     needs: build_wheels_matrix
@@ -58,15 +60,16 @@ jobs:
         submodules: true
 
     - name: Checkout build commit
-      run: |
-        git -C dlib checkout $BUILD_COMMIT
+      run: git checkout $BUILD_COMMIT
+      working-directory: ${{ env.WORKING_DIRECTORY }}
 
     - name: Fix setup.py
       run: |
-        sed -i'' -e "s/name='dlib'/name='dlib-bin'/" $REPO_DIR/setup.py
-        sed -i'' -e "s/version=read_version_from_cmakelists('dlib\/CMakeLists.txt')/version='$DLIB_BIN_VERSION'/" $REPO_DIR/setup.py
-        sed -i'' -e "s/url='https:\/\/github\.com\/davisking\/dlib'/url='https:\/\/github\.com\/alesanfra\/dlib-wheels'/" $REPO_DIR/setup.py
-        sed -i'' -e "s/_cmake_extra_options = \[\]/_cmake_extra_options = \['-DDLIB_NO_GUI_SUPPORT=ON'\]/" $REPO_DIR/setup.py
+        sed -i'' -e "s/name='dlib'/name='dlib-bin'/" setup.py
+        sed -i'' -e "s/version=read_version_from_cmakelists('dlib\/CMakeLists.txt')/version='$DLIB_BIN_VERSION'/" setup.py
+        sed -i'' -e "s/url='https:\/\/github\.com\/davisking\/dlib'/url='https:\/\/github\.com\/alesanfra\/dlib-wheels'/" setup.py
+        sed -i'' -e "s/_cmake_extra_options = \[\]/_cmake_extra_options = \['-DDLIB_NO_GUI_SUPPORT=ON'\]/" setup.py
+      working-directory: ${{ env.WORKING_DIRECTORY }}
           
     - name: Set up QEMU
       if: runner.os == 'Linux'
@@ -75,6 +78,7 @@ jobs:
     - uses: pypa/cibuildwheel@v2.17.0
       with:
         only: ${{ matrix.only }}
+        package-dir: ${{ env.WORKING_DIRECTORY }}
       env:
         CIBW_BUILD_VERBOSITY: 1
         CIBW_BEFORE_BUILD: pip install cmake
