@@ -15,11 +15,18 @@ jobs:
       include: ${{ steps.set-matrix.outputs.include }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
+
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.x"
+          python-version: 3.x
+
       - run: pip install cibuildwheel==2.17.0
-      - run: sed -i'' -e "s/setup(/setup(python_requires='$PYTHON_REQUIRES',/" $REPO_DIR/setup.py
+
+      - name: Patch setup.py with python_requires
+        run: sed -i'' -e "s/setup(/setup(python_requires='$PYTHON_REQUIRES',/" $REPO_DIR/setup.py
+
       - id: set-matrix
         run: |
           MATRIX_INCLUDE=$(
@@ -47,10 +54,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: true
 
-    - name: Checkout submodules
+    - name: Checkout build commit
       run: |
-        git submodule update --init --recursive
         git -C dlib checkout $BUILD_COMMIT
 
     - name: Fix setup.py
@@ -71,9 +79,9 @@ jobs:
         CIBW_BUILD_VERBOSITY: 1
         CIBW_BEFORE_BUILD: pip install cmake
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
-        name: dist
+        name: dist-${{ matrix.only }}
         path: wheelhouse/*.whl
  
   upload_pypi:
@@ -82,10 +90,11 @@ jobs:
     # upload to PyPI on master
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: artifact
-          path: dist
+          path: dist/
+          pattern: dist-*
+          merge-multiple: true
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
