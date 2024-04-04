@@ -60,7 +60,7 @@ jobs:
         submodules: true
 
     - name: Checkout build commit
-      run: git checkout $BUILD_COMMIT
+      run: git fetch --all && git checkout $BUILD_COMMIT
       working-directory: ${{ env.WORKING_DIRECTORY }}
 
     - name: Fix setup.py
