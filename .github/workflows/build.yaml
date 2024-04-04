@@ -2,6 +2,12 @@ name: Build
 
 on: [push]
 
+env:
+  REPO_DIR: 'dlib'
+  BUILD_COMMIT: 'v19.24.2'
+  DLIB_BIN_VERSION: '19.24.2'
+  PYTHON_REQUIRES: '>=3.7'
+
 jobs:
   build_wheels_matrix:
     runs-on: ubuntu-latest
@@ -13,6 +19,7 @@ jobs:
         with:
           python-version: "3.x"
       - run: pip install cibuildwheel==2.17.0
+      - run: sed -i'' -e "s/setup(/setup(python_requires='$PYTHON_REQUIRES',/" $REPO_DIR/setup.py
       - id: set-matrix
         run: |
           MATRIX_INCLUDE=$(
@@ -37,11 +44,6 @@ jobs:
     defaults:
       run:
         shell: bash
-
-    env:
-      REPO_DIR: 'dlib'
-      BUILD_COMMIT: 'v19.24.2'
-      DLIB_BIN_VERSION: '19.24.2'
 
     steps:
     - uses: actions/checkout@v4
