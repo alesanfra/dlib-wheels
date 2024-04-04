@@ -82,7 +82,7 @@ jobs:
       env:
         CIBW_BUILD_VERBOSITY: 1
         CIBW_BEFORE_BUILD: pip install cmake
-        CIBW_REPAIR_WHEEL_COMMAND_MACOS: '' # arm64 repair is complaining
+        CIBW_REPAIR_WHEEL_COMMAND_MACOS: 'delocate-wheel -w {dest_dir} -v {wheel}' # removed '--require-archs {delocate_archs}' from the default command, arm64 was complaining about the generated pybind so
         CIBW_TEST_COMMAND: python -c "import dlib" # smoketest
 
     - uses: actions/upload-artifact@v4
