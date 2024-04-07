@@ -8,9 +8,10 @@ on:
 
 env:
   WORKING_DIRECTORY: 'dlib'
-  BUILD_COMMIT: 'v19.24.2'
-  DLIB_BIN_VERSION: '19.24.2.post1'
-  PYTHON_REQUIRES: '>=3.7'
+  BUILD_COMMIT: 'v19.24.4'
+  DLIB_BIN_VERSION: '19.24.4'
+  PYTHON_REQUIRES: '>=3.8'
+  CIBUILDWHEEL_VERSION: '2.17.0'
 
 jobs:
   build_wheels_matrix:
@@ -26,11 +27,13 @@ jobs:
         with:
           python-version: 3.x
 
-      - run: pip install cibuildwheel==2.17.0  # sync version with pypa/cibuildwheel below
+      - name: Install cibuildwheel
+        run: pip install cibuildwheel==$CIBUILDWHEEL_VERSION
 
       - id: set-matrix
         env:
-          CIBW_PROJECT_REQUIRES_PYTHON: '>=3.7'  # it is missing in setup.py and needed to determine which wheels to build
+          # it is missing in setup.py and needed to determine which wheels to build
+          CIBW_PROJECT_REQUIRES_PYTHON: $PYTHON_REQUIRES  
         run: |
           MATRIX_INCLUDE=$(
             {
@@ -78,7 +81,7 @@ jobs:
       if: runner.os == 'Linux'
       uses: docker/setup-qemu-action@v3
 
-    - uses: pypa/cibuildwheel@v2.17.0  # sync version with pip install cibuildwheel above
+    - uses: pypa/cibuildwheel@v${CIBUILDWHEEL_VERSION}  # sync version with pip install cibuildwheel above
       with:
         only: ${{ matrix.only }}
         package-dir: ${{ env.WORKING_DIRECTORY }}
