@@ -1,11 +1,15 @@
 name: Build
 
-on: [push]
+on:
+  push: 
+  workflow_dispatch:
+  pull_request_target:
+    types: [assigned, opened, synchronize, reopened]
 
 env:
   WORKING_DIRECTORY: 'dlib'
   BUILD_COMMIT: 'v19.24.2'
-  DLIB_BIN_VERSION: '19.24.2'
+  DLIB_BIN_VERSION: '19.24.2.post1'
   PYTHON_REQUIRES: '>=3.7'
 
 jobs:
