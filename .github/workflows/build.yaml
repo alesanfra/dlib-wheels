@@ -78,7 +78,7 @@ jobs:
       if: runner.os == 'Linux'
       uses: docker/setup-qemu-action@v3
 
-    - uses: pypa/cibuildwheel@v${{ env.CIBUILDWHEEL_VERSION }}  # sync version with pip install cibuildwheel above
+    - uses: pypa/cibuildwheel@v${{ CIBUILDWHEEL_VERSION }}  # sync version with pip install cibuildwheel above
       with:
         only: ${{ matrix.only }}
         package-dir: ${{ env.WORKING_DIRECTORY }}
