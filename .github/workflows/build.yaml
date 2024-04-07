@@ -97,6 +97,8 @@ jobs:
     runs-on: ubuntu-latest
     # upload to PyPI on master
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    permissions:
+      id-token: write  # pypa/gh-action-pypi-publish
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -106,5 +108,4 @@ jobs:
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          password: ${{ secrets.PYPI_PASSWORD }}
           skip_existing: true
