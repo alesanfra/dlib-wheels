@@ -10,7 +10,7 @@ env:
   WORKING_DIRECTORY: 'dlib'
   BUILD_COMMIT: 'v19.24.4'
   DLIB_BIN_VERSION: '19.24.4'
-  PYTHON_REQUIRES: '>=3.8'
+  CIBW_PROJECT_REQUIRES_PYTHON: '>=3.8'
   CIBUILDWHEEL_VERSION: '2.17.0'
 
 jobs:
@@ -31,9 +31,6 @@ jobs:
         run: pip install cibuildwheel==$CIBUILDWHEEL_VERSION
 
       - id: set-matrix
-        env:
-          # it is missing in setup.py and needed to determine which wheels to build
-          CIBW_PROJECT_REQUIRES_PYTHON: $PYTHON_REQUIRES  
         run: |
           MATRIX_INCLUDE=$(
             {
