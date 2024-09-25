@@ -76,6 +76,7 @@ jobs:
         sed -i'' -e "s/version=read_version_from_cmakelists('dlib\/CMakeLists.txt')/version='$DLIB_BIN_VERSION'/" setup.py
         sed -i'' -e "s/url='https:\/\/github\.com\/davisking\/dlib'/url='https:\/\/github\.com\/alesanfra\/dlib-wheels'/" setup.py
         sed -i'' -e "s/_cmake_extra_options = \[\]/_cmake_extra_options = \['-DDLIB_NO_GUI_SUPPORT=ON'\]/" setup.py
+        sed -i'' -e "s/requires = \[\"setuptools\", \"wheel\"\]/requires = \[\"setuptools\", \"wheel\", \"cmake==3.24.0\"\]/" pyproject.toml
       working-directory: ${{ env.WORKING_DIRECTORY }}
           
     - name: Set up QEMU
