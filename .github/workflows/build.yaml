@@ -29,11 +29,12 @@ jobs:
         with:
           python-version: 3.x
 
-      - run: pip install cibuildwheel==2.17.0  # sync version with pypa/cibuildwheel below
+      - run: pip install cibuildwheel==2.22.0  # sync version with pypa/cibuildwheel below
 
       - id: set-matrix
         env:
           CIBW_PROJECT_REQUIRES_PYTHON: '>=3.7'  # it is missing in setup.py and needed to determine which wheels to build
+          CIBW_ENABLE: cpython-prerelease cpython-freethreading  # enable experimental freethreading build
         run: |
           MATRIX_INCLUDE=$(
             {
@@ -83,7 +84,7 @@ jobs:
       if: runner.os == 'Linux'
       uses: docker/setup-qemu-action@v3
 
-    - uses: pypa/cibuildwheel@v2.17.0  # sync version with pip install cibuildwheel above
+    - uses: pypa/cibuildwheel@v2.22.0  # sync version with pip install cibuildwheel above
       with:
         only: ${{ matrix.only }}
         package-dir: ${{ env.WORKING_DIRECTORY }}
