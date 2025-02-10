@@ -12,7 +12,7 @@ env:
   WORKING_DIRECTORY: 'dlib'
   BUILD_COMMIT: 'v19.24.6'
   DLIB_BIN_VERSION: '19.24.6'
-  PYTHON_REQUIRES: '>=3.7'
+  PYTHON_REQUIRES: '>=3.8'
 
 jobs:
   build_wheels_matrix:
@@ -33,15 +33,17 @@ jobs:
 
       - id: set-matrix
         env:
-          CIBW_PROJECT_REQUIRES_PYTHON: '>=3.7'  # it is missing in setup.py and needed to determine which wheels to build
-          CIBW_ENABLE: cpython-prerelease cpython-freethreading  # enable experimental freethreading build
+          CIBW_PROJECT_REQUIRES_PYTHON: '>=3.8'  # it is missing in setup.py and needed to determine which wheels to build
+          CIBW_ENABLE: "cpython-freethreading"
+          CIBW_SKIP: "pp* cp38-macosx_arm64 *t-win*"
+          CIBW_BUILD: "cp*"
         run: |
           MATRIX_INCLUDE=$(
             {
-              cibuildwheel --print-build-identifiers --platform linux --arch x86_64,aarch64 | grep cp |  jq -nRc '{"only": inputs, "os": "ubuntu-latest", "deployment_target": ""}' \
-              && cibuildwheel --print-build-identifiers --platform macos --arch x86_64 | grep cp |  jq -nRc '{"only": inputs, "os": "macos-13", "deployment_target": "13"}' \
-              && cibuildwheel --print-build-identifiers --platform macos --arch arm64 | grep cp |  jq -nRc '{"only": inputs, "os": "macos-14", "deployment_target": "14"}' \
-              && cibuildwheel --print-build-identifiers --platform windows --arch AMD64 | grep cp |  jq -nRc '{"only": inputs, "os": "windows-latest", "deployment_target": ""}'
+              cibuildwheel --print-build-identifiers --platform linux --arch x86_64,aarch64 | jq -nRc '{"only": inputs, "os": "ubuntu-latest", "deployment_target": ""}' \
+              && cibuildwheel --print-build-identifiers --platform macos --arch x86_64 | jq -nRc '{"only": inputs, "os": "macos-13", "deployment_target": "13"}' \
+              && cibuildwheel --print-build-identifiers --platform macos --arch arm64 | jq -nRc '{"only": inputs, "os": "macos-14", "deployment_target": "14"}' \
+              && cibuildwheel --print-build-identifiers --platform windows --arch AMD64 | jq -nRc '{"only": inputs, "os": "windows-latest", "deployment_target": ""}'
             } | jq -sc
           )
           echo "include=$MATRIX_INCLUDE" >> $GITHUB_OUTPUT
