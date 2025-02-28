@@ -12,7 +12,7 @@ env:
   WORKING_DIRECTORY: 'dlib'
   BUILD_COMMIT: 'v19.24.6'
   DLIB_BIN_VERSION: '19.24.6'
-  PYTHON_REQUIRES: '>=3.7'
+  PYTHON_REQUIRES: '>=3.8'
 
 jobs:
   build_wheels_matrix:
@@ -29,18 +29,21 @@ jobs:
         with:
           python-version: 3.x
 
-      - run: pip install cibuildwheel==2.17.0  # sync version with pypa/cibuildwheel below
+      - run: pip install cibuildwheel==2.22.0  # sync version with pypa/cibuildwheel below
 
       - id: set-matrix
         env:
-          CIBW_PROJECT_REQUIRES_PYTHON: '>=3.7'  # it is missing in setup.py and needed to determine which wheels to build
+          CIBW_PROJECT_REQUIRES_PYTHON: '>=3.8'  # it is missing in setup.py and needed to determine which wheels to build
+          CIBW_ENABLE: "cpython-freethreading"
+          CIBW_SKIP: "pp* cp38-macosx_arm64 *t-win*"
+          CIBW_BUILD: "cp*"
         run: |
           MATRIX_INCLUDE=$(
             {
-              cibuildwheel --print-build-identifiers --platform linux --arch x86_64,aarch64 | grep cp |  jq -nRc '{"only": inputs, "os": "ubuntu-latest"}' \
-              && cibuildwheel --print-build-identifiers --platform macos --arch x86_64 | grep cp |  jq -nRc '{"only": inputs, "os": "macos-13"}' \
-              && cibuildwheel --print-build-identifiers --platform macos --arch arm64 | grep cp |  jq -nRc '{"only": inputs, "os": "macos-14"}' \
-              && cibuildwheel --print-build-identifiers --platform windows --arch AMD64 | grep cp |  jq -nRc '{"only": inputs, "os": "windows-latest"}'
+              cibuildwheel --print-build-identifiers --platform linux --arch x86_64,aarch64 | jq -nRc '{"only": inputs, "os": "ubuntu-latest", "deployment_target": ""}' \
+              && cibuildwheel --print-build-identifiers --platform macos --arch x86_64 | jq -nRc '{"only": inputs, "os": "macos-13", "deployment_target": "13"}' \
+              && cibuildwheel --print-build-identifiers --platform macos --arch arm64 | jq -nRc '{"only": inputs, "os": "macos-14", "deployment_target": "14"}' \
+              && cibuildwheel --print-build-identifiers --platform windows --arch AMD64 | jq -nRc '{"only": inputs, "os": "windows-latest", "deployment_target": ""}'
             } | jq -sc
           )
           echo "include=$MATRIX_INCLUDE" >> $GITHUB_OUTPUT
@@ -76,14 +79,14 @@ jobs:
         sed -i'' -e "s/version=read_version_from_cmakelists('dlib\/CMakeLists.txt')/version='$DLIB_BIN_VERSION'/" setup.py
         sed -i'' -e "s/url='https:\/\/github\.com\/davisking\/dlib'/url='https:\/\/github\.com\/alesanfra\/dlib-wheels'/" setup.py
         sed -i'' -e "s/_cmake_extra_options = \[\]/_cmake_extra_options = \['-DDLIB_NO_GUI_SUPPORT=ON'\]/" setup.py
-        sed -i'' -e "s/requires = \[\"setuptools\", \"wheel\"\]/requires = \[\"setuptools\", \"wheel\", \"cmake==3.24.0\"\]/" pyproject.toml
+        sed -i'' -e "s/requires = \[\"setuptools\", \"wheel\"\]/requires = \[\"setuptools\", \"wheel\", \"cmake>=3.31.0\"\]/" pyproject.toml
       working-directory: ${{ env.WORKING_DIRECTORY }}
           
     - name: Set up QEMU
       if: runner.os == 'Linux'
       uses: docker/setup-qemu-action@v3
 
-    - uses: pypa/cibuildwheel@v2.17.0  # sync version with pip install cibuildwheel above
+    - uses: pypa/cibuildwheel@v2.22.0  # sync version with pip install cibuildwheel above
       with:
         only: ${{ matrix.only }}
         package-dir: ${{ env.WORKING_DIRECTORY }}
@@ -91,6 +94,7 @@ jobs:
         CIBW_BUILD_VERBOSITY: 1
         CIBW_BEFORE_BUILD: pip install cmake
         CIBW_TEST_COMMAND: python -c "import dlib"
+        MACOSX_DEPLOYMENT_TARGET: ${{ matrix.deployment_target }}
 
     - uses: actions/upload-artifact@v4
       with:
