@@ -8,7 +8,7 @@ This project creates a pre-compiled distrubution of [dlib](https://github.com/da
 
 With `dlib-bin` you're just one `pip install` away from your next machine learning project!
 
-Currently building x86_64 wheels for windows, macOS and linux ([manylinux2014](https://www.python.org/dev/peps/pep-0571))
+Currently building wheels for Windows (AMD64), macOS (arm64), and Linux (x86_64 and aarch64, [manylinux2014](https://peps.python.org/pep-0599/)).
 
 ## How to install this distribution?
 
