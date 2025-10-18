@@ -12,7 +12,7 @@ env:
   WORKING_DIRECTORY: 'dlib'
   BUILD_COMMIT: 'v20.0'
   DLIB_BIN_VERSION: '20.0.0'
-  PYTHON_REQUIRES: '>=3.11'
+  CIBW_PROJECT_REQUIRES_PYTHON: '>=3.11'
   CIBUILDWHEEL_VERSION: '2.22.0'
 
 jobs:
@@ -34,9 +34,8 @@ jobs:
 
       - id: set-matrix
         env:
-          CIBW_PROJECT_REQUIRES_PYTHON: $PYTHON_REQUIRES  # it is missing in setup.py and needed to determine which wheels to build
           CIBW_ENABLE: "cpython-freethreading"
-          CIBW_SKIP: "pp* cp38-macosx_arm64 *t-win*"
+          CIBW_SKIP: "pp* *t-win*"
           CIBW_BUILD: "cp*"
         run: |
           MATRIX_INCLUDE=$(
@@ -86,7 +85,7 @@ jobs:
       if: runner.os == 'Linux'
       uses: docker/setup-qemu-action@v3
 
-    - uses: pypa/cibuildwheel@v$CIBUILDWHEEL_VERSION
+    - uses: pypa/cibuildwheel@v${{ env.CIBUILDWHEEL_VERSION }}
       with:
         only: ${{ matrix.only }}
         package-dir: ${{ env.WORKING_DIRECTORY }}
