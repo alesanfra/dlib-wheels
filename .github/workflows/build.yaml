@@ -41,16 +41,16 @@ jobs:
           - { only: "cp314-musllinux_x86_64", os: "ubuntu-latest" }
           
           # Linux aarch64 - manylinux (native ARM runners)
-          - { only: "cp311-manylinux_aarch64", os: "ubuntu-24.04-arm64" }
-          - { only: "cp312-manylinux_aarch64", os: "ubuntu-24.04-arm64" }
-          - { only: "cp313-manylinux_aarch64", os: "ubuntu-24.04-arm64" }
-          - { only: "cp314-manylinux_aarch64", os: "ubuntu-24.04-arm64" }
+          - { only: "cp311-manylinux_aarch64", os: "ubuntu-24.04-arm" }
+          - { only: "cp312-manylinux_aarch64", os: "ubuntu-24.04-arm" }
+          - { only: "cp313-manylinux_aarch64", os: "ubuntu-24.04-arm" }
+          - { only: "cp314-manylinux_aarch64", os: "ubuntu-24.04-arm" }
           
           # Linux aarch64 - musllinux (native ARM runners)
-          - { only: "cp311-musllinux_aarch64", os: "ubuntu-24.04-arm64" }
-          - { only: "cp312-musllinux_aarch64", os: "ubuntu-24.04-arm64" }
-          - { only: "cp313-musllinux_aarch64", os: "ubuntu-24.04-arm64" }
-          - { only: "cp314-musllinux_aarch64", os: "ubuntu-24.04-arm64" }
+          - { only: "cp311-musllinux_aarch64", os: "ubuntu-24.04-arm" }
+          - { only: "cp312-musllinux_aarch64", os: "ubuntu-24.04-arm" }
+          - { only: "cp313-musllinux_aarch64", os: "ubuntu-24.04-arm" }
+          - { only: "cp314-musllinux_aarch64", os: "ubuntu-24.04-arm" }
           
           # macOS arm64
           - { only: "cp311-macosx_arm64", os: "macos-14" }
