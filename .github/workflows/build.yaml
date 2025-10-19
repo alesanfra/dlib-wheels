@@ -13,7 +13,7 @@ env:
   WORKING_DIRECTORY: "dlib"
   BUILD_COMMIT: "v20.0"
   DLIB_BIN_VERSION: "20.0.0"
-  CIBUILDWHEEL_VERSION: "2.22.0"
+  CIBUILDWHEEL_VERSION: "3.2.1"
   
   # Python requirements
   CIBW_PROJECT_REQUIRES_PYTHON: ">=3.11"
@@ -48,7 +48,6 @@ jobs:
         env:
           CIBW_ENABLE: "cpython-freethreading"
           CIBW_SKIP: "pp* *t-win*"  # Skip PyPy and freethreading on Windows
-          CIBW_BUILD: "cp*"          # Build CPython wheels only
         run: |
           MATRIX_INCLUDE=$(
             {
@@ -112,8 +111,9 @@ jobs:
         if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@v3
 
+      # Note: version must match CIBUILDWHEEL_VERSION env var
       - name: Build wheels
-        uses: pypa/cibuildwheel@v${{ env.CIBUILDWHEEL_VERSION }}
+        uses: pypa/cibuildwheel@v3.2.1
         with:
           only: ${{ matrix.only }}
           package-dir: ${{ env.WORKING_DIRECTORY }}
