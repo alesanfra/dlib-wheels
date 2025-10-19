@@ -19,58 +19,50 @@ env:
   CIBW_PROJECT_REQUIRES_PYTHON: ">=3.11"
 
 jobs:
-  # Generate dynamic build matrix for all platforms
-  build_wheels_matrix:
-    name: Generate build matrix
-    runs-on: ubuntu-latest
-    
-    outputs:
-      include: ${{ steps.set-matrix.outputs.include }}
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.ref }}
-          submodules: true
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-          
-      - name: Install cibuildwheel
-        run: pip install cibuildwheel=="${{ env.CIBUILDWHEEL_VERSION }}"
-
-      - name: Generate build matrix
-        id: set-matrix
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        env:
-          CIBW_BUILD: "cp311-* cp312-* cp313-* cp314-*"  # Build for Python 3.11-3.14
-          CIBW_SKIP: "pp* *t-win*"  # Skip PyPy and freethreading on Windows
-        run: |
-          MATRIX_INCLUDE=$(
-            {
-              cibuildwheel --print-build-identifiers --platform linux --arch x86_64,aarch64 | \
-                jq -nRc '{"only": inputs, "os": "ubuntu-latest", "deployment_target": ""}' \
-              && cibuildwheel --print-build-identifiers --platform macos --arch arm64 | \
-                jq -nRc '{"only": inputs, "os": "macos-14", "deployment_target": "14"}' \
-              && cibuildwheel --print-build-identifiers --platform windows --arch AMD64 | \
-                jq -nRc '{"only": inputs, "os": "windows-latest", "deployment_target": ""}'
-            } | jq -sc
-          )
-          echo "include=$MATRIX_INCLUDE" >> $GITHUB_OUTPUT
-
   # Build wheels for all platforms
   build_wheels:
     name: Build ${{ matrix.only }}
-    needs: build_wheels_matrix
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJson(needs.build_wheels_matrix.outputs.include) }}
+        include:
+          # Linux x86_64 - manylinux
+          - { only: "cp311-manylinux_x86_64", os: "ubuntu-latest" }
+          - { only: "cp312-manylinux_x86_64", os: "ubuntu-latest" }
+          - { only: "cp313-manylinux_x86_64", os: "ubuntu-latest" }
+          - { only: "cp314-manylinux_x86_64", os: "ubuntu-latest" }
+          
+          # Linux x86_64 - musllinux
+          - { only: "cp311-musllinux_x86_64", os: "ubuntu-latest" }
+          - { only: "cp312-musllinux_x86_64", os: "ubuntu-latest" }
+          - { only: "cp313-musllinux_x86_64", os: "ubuntu-latest" }
+          - { only: "cp314-musllinux_x86_64", os: "ubuntu-latest" }
+          
+          # Linux aarch64 - manylinux
+          - { only: "cp311-manylinux_aarch64", os: "ubuntu-latest" }
+          - { only: "cp312-manylinux_aarch64", os: "ubuntu-latest" }
+          - { only: "cp313-manylinux_aarch64", os: "ubuntu-latest" }
+          - { only: "cp314-manylinux_aarch64", os: "ubuntu-latest" }
+          
+          # Linux aarch64 - musllinux
+          - { only: "cp311-musllinux_aarch64", os: "ubuntu-latest" }
+          - { only: "cp312-musllinux_aarch64", os: "ubuntu-latest" }
+          - { only: "cp313-musllinux_aarch64", os: "ubuntu-latest" }
+          - { only: "cp314-musllinux_aarch64", os: "ubuntu-latest" }
+          
+          # macOS arm64
+          - { only: "cp311-macosx_arm64", os: "macos-14" }
+          - { only: "cp312-macosx_arm64", os: "macos-14" }
+          - { only: "cp313-macosx_arm64", os: "macos-14" }
+          - { only: "cp314-macosx_arm64", os: "macos-14" }
+          
+          # Windows AMD64
+          - { only: "cp311-win_amd64", os: "windows-latest" }
+          - { only: "cp312-win_amd64", os: "windows-latest" }
+          - { only: "cp313-win_amd64", os: "windows-latest" }
+          - { only: "cp314-win_amd64", os: "windows-latest" }
 
     defaults:
       run:
@@ -121,7 +113,6 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_BEFORE_BUILD: pip install cmake
           CIBW_TEST_COMMAND: python -c "import dlib"
-          MACOSX_DEPLOYMENT_TARGET: ${{ matrix.deployment_target }}
 
       - name: Upload wheel artifacts
         uses: actions/upload-artifact@v4
