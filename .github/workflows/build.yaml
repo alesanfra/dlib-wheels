@@ -46,7 +46,7 @@ jobs:
         id: set-matrix
         working-directory: ${{ env.WORKING_DIRECTORY }}
         env:
-          CIBW_ENABLE: "cpython-freethreading"
+          CIBW_BUILD: "cp311-* cp312-* cp313-* cp314-*"  # Build for Python 3.11-3.14
           CIBW_SKIP: "pp* *t-win*"  # Skip PyPy and freethreading on Windows
         run: |
           MATRIX_INCLUDE=$(
