@@ -13,7 +13,7 @@ env:
   WORKING_DIRECTORY: "dlib"
   BUILD_COMMIT: "v20.0.1"
   DLIB_BIN_VERSION: "20.0.1"
-  CIBUILDWHEEL_VERSION: "3.2.1"
+  CIBUILDWHEEL_VERSION: "4.2.1"
   
   # Python requirements
   CIBW_PROJECT_REQUIRES_PYTHON: ">=3.10"
@@ -34,6 +34,7 @@ jobs:
           - { only: "cp312-manylinux_x86_64", os: "ubuntu-latest" }
           - { only: "cp313-manylinux_x86_64", os: "ubuntu-latest" }
           - { only: "cp314-manylinux_x86_64", os: "ubuntu-latest" }
+          - { only: "cp315-manylinux_x86_64", os: "ubuntu-latest" }
           
           # Linux x86_64 - musllinux
           - { only: "cp310-musllinux_x86_64", os: "ubuntu-latest" }
@@ -41,6 +42,7 @@ jobs:
           - { only: "cp312-musllinux_x86_64", os: "ubuntu-latest" }
           - { only: "cp313-musllinux_x86_64", os: "ubuntu-latest" }
           - { only: "cp314-musllinux_x86_64", os: "ubuntu-latest" }
+          - { only: "cp315-musllinux_x86_64", os: "ubuntu-latest" }
           
           # Linux aarch64 - manylinux (native ARM runners)
           - { only: "cp310-manylinux_aarch64", os: "ubuntu-24.04-arm" }
@@ -48,6 +50,7 @@ jobs:
           - { only: "cp312-manylinux_aarch64", os: "ubuntu-24.04-arm" }
           - { only: "cp313-manylinux_aarch64", os: "ubuntu-24.04-arm" }
           - { only: "cp314-manylinux_aarch64", os: "ubuntu-24.04-arm" }
+          - { only: "cp315-manylinux_aarch64", os: "ubuntu-24.04-arm" }
           
           # Linux aarch64 - musllinux (native ARM runners)
           - { only: "cp310-musllinux_aarch64", os: "ubuntu-24.04-arm" }
@@ -55,6 +58,7 @@ jobs:
           - { only: "cp312-musllinux_aarch64", os: "ubuntu-24.04-arm" }
           - { only: "cp313-musllinux_aarch64", os: "ubuntu-24.04-arm" }
           - { only: "cp314-musllinux_aarch64", os: "ubuntu-24.04-arm" }
+          - { only: "cp315-musllinux_aarch64", os: "ubuntu-24.04-arm" }
           
           # macOS arm64
           - { only: "cp310-macosx_arm64", os: "macos-14" }
@@ -62,6 +66,7 @@ jobs:
           - { only: "cp312-macosx_arm64", os: "macos-14" }
           - { only: "cp313-macosx_arm64", os: "macos-14" }
           - { only: "cp314-macosx_arm64", os: "macos-14" }
+          - { only: "cp315-macosx_arm64", os: "macos-14" }
           
           # Windows AMD64
           - { only: "cp310-win_amd64", os: "windows-latest" }
@@ -69,6 +74,7 @@ jobs:
           - { only: "cp312-win_amd64", os: "windows-latest" }
           - { only: "cp313-win_amd64", os: "windows-latest" }
           - { only: "cp314-win_amd64", os: "windows-latest" }
+          - { only: "cp315-win_amd64", os: "windows-latest" }
 
     defaults:
       run:
@@ -107,7 +113,7 @@ jobs:
           
       # Note: version must match CIBUILDWHEEL_VERSION env var
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.2.1
+        uses: pypa/cibuildwheel@v4.2.1
         with:
           only: ${{ matrix.only }}
           package-dir: ${{ env.WORKING_DIRECTORY }}

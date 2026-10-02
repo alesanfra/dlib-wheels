@@ -39,7 +39,7 @@ Once updated, simply commit and push your changes to trigger the build workflow.
 ## Important Notes
 
 **Version 20 and Beyond:**  
-Starting with version 20.0.1 (March 2026), this distribution builds binary wheels for the **five most recent Python versions**: currently Python 3.10, 3.11, 3.12, 3.13, and 3.14.
+Starting with version 20.0.1 (March 2026), this distribution builds binary wheels for Python 3.10, 3.11, 3.12, 3.13, 3.14, and 3.15.
 
 **macOS Support:**  
 Following Apple's deprecation of Intel-based macOS builds, we now support **Apple Silicon (arm64) only** starting from version 20.
