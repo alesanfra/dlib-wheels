@@ -12,7 +12,7 @@ With `dlib-bin`, you're just one `pip install` command away from starting your n
 
 We currently build wheels for the following platforms:
 
-- **Windows** (AMD64)
+- **Windows** (AMD64 and ARM64)
 - **macOS** (Apple Silicon / arm64)
 - **Linux GLIBC-based** distributions like Ubuntu, Debian, and RHEL (x86_64 and aarch64, [manylinux_2_28](https://peps.python.org/pep-0600/))
 - **Linux MUSL-based** distributions like Alpine (x86_64 and aarch64, [musllinux_1_2](https://peps.python.org/pep-0656/))

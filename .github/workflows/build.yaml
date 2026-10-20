@@ -53,6 +53,9 @@ jobs:
           # Windows AMD64
           - { platform: "win_amd64", os: "windows-latest" }
 
+          # Windows arm64 (native ARM runners)
+          - { platform: "win_arm64", os: "windows-11-arm" }
+
     defaults:
       run:
         shell: bash
