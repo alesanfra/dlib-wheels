@@ -91,6 +91,16 @@ jobs:
           # Add CMake build requirement
           sed -i'' -e "s/requires = \[\"setuptools\", \"wheel\"\]/requires = \[\"setuptools\", \"wheel\", \"cmake>=3.31.0\"\]/" pyproject.toml
 
+          # TEMPORARY PATCH: Windows ARM64 support for dlib v20.0.1.
+          # dlib v20.0.1 always passes '-A x64' to CMake on 64-bit Windows, and enables x86 SSE2
+          # code for every MSVC build, which the ARM64 compiler rejects. When building for
+          # win-arm64, target ARM64 and turn SSE2 off instead (no SIMD is used on this platform).
+          # Fixed upstream in davisking/dlib#3164, which also adds MSVC NEON support.
+          # Remove this patch once BUILD_COMMIT points to a dlib release that includes that fix.
+          sed -i'' -e "s/cmake_args += \['-A', 'x64'\]/cmake_args += (['-A', 'ARM64', '-DUSE_SSE2_INSTRUCTIONS=OFF'] if self.plat_name == 'win-arm64' else ['-A', 'x64'])/" setup.py
+          # Fail if the pattern above no longer matches dlib's setup.py
+          grep -q "'-A', 'ARM64'" setup.py
+
       # ccache shares compiled objects between Python versions and between runs.
       # Not used on Windows: setup.py uses the Visual Studio generator, which ignores compiler launchers.
       - name: Restore ccache
